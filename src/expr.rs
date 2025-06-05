@@ -1,4 +1,5 @@
 #[derive(Debug, Clone)]
+
 pub enum Expr {
     Number(f64), // 2.0 or 3.4
     Variable(String), // x or y
