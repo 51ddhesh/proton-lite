@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env::Vars};
+use std::{collections::HashMap};
 
 #[derive(Debug)]
 enum Expr {
@@ -37,9 +37,9 @@ fn to_string(expr: &Expr) -> String {
 }
 
 
-fn main() {
+fn test_operations() {
     // Build an expression like x + 2
-    let expr: Expr = Expr::Add(
+    let mut expr: Expr = Expr::Add(
         Box::new(Expr::Variable("x".to_string())),
         Box::new(Expr::Number(2.0)),
     ); // left = x, right = 2.0
@@ -47,9 +47,48 @@ fn main() {
     // Define the value of variable x
     let mut vars = HashMap::new();
     vars.insert("x".to_string(), 3.0); // x = 3.0
-    let result = evaluate(&expr, &vars);
+    let mut result = evaluate(&expr, &vars);
 
-    println!("Expression: {}", to_string(&expr)); // prints (x + 2)
+    println!("Expression: {}, x = {:?}", to_string(&expr), vars.get("x")); // prints (x + 2)
     println!("Result: {}", result); // prints 5.0
 
+    expr = Expr::Sub(
+        Box::new(Expr::Variable("y".to_string())),
+        Box::new(Expr::Number(5.0)),
+    );
+
+    vars.insert("y".to_string(), 10.0);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}, y = {:?}", to_string(&expr), vars.get("y")); // prints (y - 5)
+    println!("Result: {}", result); // prints 5
+
+    expr = Expr::Mul(
+        Box::new(Expr::Variable("z".to_string())),
+        Box::new(Expr::Number(2.0)),
+    );
+
+    vars.insert("z".to_string(), 5.0);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}, z = {:?}", to_string(&expr), vars.get("z")); // prints (z * 2)
+    println!("Result: {}", result); // prints 10
+
+
+    expr = Expr::Div(
+        Box::new(Expr::Variable("t".to_string())),
+        Box::new(Expr::Number(3.0)),
+    );
+
+    vars.insert("t".to_string(), 9.0);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}, t = {:?}", to_string(&expr), vars.get("t"));
+    println!("Result: {}", result);
+
+}
+
+
+fn main() {
+    test_operations();
 }
