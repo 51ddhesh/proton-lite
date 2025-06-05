@@ -8,7 +8,8 @@ enum Expr {
     Sub(Box<Expr>, Box<Expr>),
     Mul(Box<Expr>, Box<Expr>),
     Div(Box<Expr>, Box<Expr>),
-    Pow(Box<Expr>, Box<Expr>)
+    Pow(Box<Expr>, Box<Expr>),
+    Func(String, Box<Expr>), // For functions like sin(x) and ln(x)
 }
 
 
@@ -27,6 +28,18 @@ fn evaluate(expr: &Expr, vars: &HashMap<String, f64>) -> f64 {
         Expr::Mul(left, right) => evaluate(left, vars) * evaluate(right, vars),
         Expr::Div(left, right) => evaluate(left, vars) / evaluate(right, vars),
         Expr::Pow(left, right) => evaluate(left, vars).powf(evaluate(right, vars)),
+        Expr::Func(name, arg) => {
+            let val = evaluate(arg, vars);
+            match name.as_str() {
+                "sin" => val.sin(),
+                "cos" => val.cos(),
+                "tan" => val.tan(),
+                "ln" => val.ln(),
+                "log10" => val.log10(),
+                "sqrt" => val.sqrt(),
+                _ => panic!("Unknown function: {}", name),
+            }
+        },
     }
 }
 
@@ -40,6 +53,7 @@ fn to_string(expr: &Expr) -> String {
         Expr::Mul(left, right) => format!("({} * {})", to_string(left), to_string(right)),
         Expr::Div(left, right) => format!("({} / {})", to_string(left), to_string(right)),
         Expr::Pow(left, right) => format!("({} ^ {})", to_string(left), to_string(right)),
+        Expr::Func(name, arg) => format!("{}({})", name, to_string(arg)),
     }
 }
 
@@ -106,6 +120,28 @@ fn test_operations() {
     println!("Expression: {}, u = {:?}, v = {:?}", to_string(&expr), vars.get("u"), vars.get("v")); // prints (u ^ v)
     println!("Result: {}", result); // prints 8
 
+
+    expr = Expr::Func(
+        "sin".to_string(),
+        Box::new(Expr::Variable("θ".to_string())),
+    );
+
+    vars.insert("θ".to_string(), std::f64::consts::FRAC_PI_2); // pi / 2 == 90 degrees
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}, θ = {:?} (π/2)", to_string(&expr), vars.get("θ"));
+    println!("Result: {}", result);
+
+
+    expr = Expr::Func(
+        "ln".to_string(),
+        Box::new(Expr::Variable("e".to_string())),
+    );
+    vars.insert("e".to_string(), std::f64::consts::E);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}", to_string(&expr));
+    println!("Result: {}", result);
 
 }
 
