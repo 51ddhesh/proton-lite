@@ -29,8 +29,8 @@ fn evaluate(expr: &Expr, vars: &HashMap<String, f64>) -> f64 {
         Expr::Div(left, right) => evaluate(left, vars) / evaluate(right, vars),
         Expr::Pow(left, right) => evaluate(left, vars).powf(evaluate(right, vars)),
         Expr::Func(name, arg) => {
-            let val = evaluate(arg, vars);
-            match name.as_str() {
+            let val: f64 = evaluate(arg, vars);
+            match name.as_str() { // Rust internal functions are used
                 "sin" => val.sin(),
                 "cos" => val.cos(),
                 "tan" => val.tan(),
@@ -66,9 +66,9 @@ fn test_operations() {
     ); // left = x, right = 2.0
 
     // Define the value of variable x
-    let mut vars = HashMap::new();
+    let mut vars: HashMap<String, f64> = HashMap::new();
     vars.insert("x".to_string(), 3.0); // x = 3.0
-    let mut result = evaluate(&expr, &vars);
+    let mut result: f64 = evaluate(&expr, &vars);
 
     println!("Expression: {}, x = {:?}", to_string(&expr), vars.get("x")); // prints (x + 2)
     println!("Result: {}", result); // prints 5.0
@@ -142,6 +142,35 @@ fn test_operations() {
 
     println!("Expression: {}", to_string(&expr));
     println!("Result: {}", result);
+
+    expr = Expr::Func(
+        "sin".to_string(),
+        Box::new(Expr::Func(
+            "ln".to_string(),
+            Box::new(Expr::Variable("w".to_string())),
+        )),
+    );
+    vars.insert("w".to_string(), 1.0);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}, w = {:?}", to_string(&expr), vars.get("w"));
+    println!("Result: {}", result);
+
+
+    expr = Expr::Pow(
+        Box::new(Expr::Number(std::f64::consts::E)),
+        Box::new(Expr::Func(
+            "sin".to_string(),
+            Box::new(Expr::Variable("x".to_string())),
+        )),
+    );
+
+    vars.insert("x".to_string(), std::f64::consts::FRAC_PI_2);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}", to_string(&expr));
+    println!("Result: {}", result);
+
 
 }
 
