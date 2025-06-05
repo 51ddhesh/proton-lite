@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "proton-lite"
+name = "proton_lite"
 version = "0.1.0"
