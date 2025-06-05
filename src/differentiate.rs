@@ -1,5 +1,53 @@
-use crate::expr::Expr;
+use crate::expr::{to_string, Expr};
 
-pub fn derivative(expr: &Expr, var: &str) -> Expr {
-    todo!("Implement symbolic differentiation");
+pub fn differentiate(expr: &Expr, var: &str) -> Expr {
+    match expr {
+        // derivative of a constant = 0
+        Expr::Number(_) => Expr::Number(0.0),
+        
+        // derivative of x wrt x is 1 else 0
+        Expr::Variable(name) => {
+            if name == var {
+                Expr::Number(1.0)
+            } else {
+               Expr::Number(0.0)
+            }
+        },
+
+        // (f + g)' = f' + g'
+        Expr::Add(left, right) => Expr::Add(
+            Box::new(differentiate(left, var)),
+            Box::new(differentiate(right, var))
+        ),
+
+        // (f - g)' = f' - g'
+        Expr::Sub(left, right) => Expr::Sub(
+            Box::new(differentiate(&left, var)),
+            Box::new(differentiate(&right, var))
+        ),
+
+        // (f * g)' = f'g + fg'
+        Expr::Mul(left, right) => Expr::Add(
+            Box::new(Expr::Mul(
+                Box::new(differentiate(&left, var)),
+                right.clone(),
+            )),
+            Box::new(Expr::Mul(
+                left.clone(),
+                Box::new(differentiate(&right, var)),
+            )),
+        ),
+
+
+        Expr::Div(left, right) => {
+            Expr::Number(0.0)
+        },
+        Expr::Pow(base, power ) => {
+            Expr::Number(0.0)
+        },
+        Expr::Func(name, args) => {
+            Expr::Number(0.0)
+        },
+        _ => panic!("Unknown Function: {}", to_string(&expr)),
+    }
 }

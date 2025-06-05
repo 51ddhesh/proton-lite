@@ -2,6 +2,7 @@ use std::{collections::HashMap};
 
 use proton_lite::eval::evaluate;
 use proton_lite::expr::{Expr, to_string};
+use proton_lite::differentiate::differentiate;
 
 fn test_operations() {
     // Build an expression like x + 2
@@ -155,6 +156,16 @@ fn test_operations() {
         vars.get("c")
     );
     println!("Result: {}", result);
+
+    expr = Expr::Mul(
+        Box::new(Expr::Variable("x".to_string())),
+        Box::new(Expr::Number(1.0)),
+    );
+
+    let d = differentiate(&expr, "x");
+    println!("Expression: {}", to_string(&expr));
+    println!("Result: {}", to_string(&d));
+
 
 }
 
