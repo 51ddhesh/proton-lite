@@ -7,20 +7,26 @@ enum Expr {
     Add(Box<Expr>, Box<Expr>), // x + 2.3 or 2.4 + 2.1
     Sub(Box<Expr>, Box<Expr>),
     Mul(Box<Expr>, Box<Expr>),
-    Div(Box<Expr>, Box<Expr>)
+    Div(Box<Expr>, Box<Expr>),
+    Pow(Box<Expr>, Box<Expr>)
 }
 
 
 fn evaluate(expr: &Expr, vars: &HashMap<String, f64>) -> f64 {
     match expr {
-        Expr::Number(n) => *n, // just return the number
-        Expr::Variable(name) => {
-            *vars.get(name).expect("variable not found") // Search for the variable in the map else panic
+        Expr::Number(n) => *n, // just return the number itself
+        Expr::Variable(name) => { // Search for the variable in the map else panic
+            *vars.get(name)
+                .unwrap_or_else(|| {
+                    println!("Warning: variable {} not found", name);
+                    &f64::NAN
+                }) 
         },
         Expr::Add(left, right) => evaluate(left, vars) + evaluate(right, vars),
         Expr::Sub(left, right) => evaluate(left, vars) - evaluate(right, vars),
         Expr::Mul(left, right) => evaluate(left, vars) * evaluate(right, vars),
         Expr::Div(left, right) => evaluate(left, vars) / evaluate(right, vars),
+        Expr::Pow(left, right) => evaluate(left, vars).powf(evaluate(right, vars)),
     }
 }
 
@@ -33,6 +39,7 @@ fn to_string(expr: &Expr) -> String {
         Expr::Sub(left, right) => format!("({} - {})", to_string(left), to_string(right)),
         Expr::Mul(left, right) => format!("({} * {})", to_string(left), to_string(right)),
         Expr::Div(left, right) => format!("({} / {})", to_string(left), to_string(right)),
+        Expr::Pow(left, right) => format!("({} ^ {})", to_string(left), to_string(right)),
     }
 }
 
@@ -83,8 +90,22 @@ fn test_operations() {
     vars.insert("t".to_string(), 9.0);
     result = evaluate(&expr, &vars);
 
-    println!("Expression: {}, t = {:?}", to_string(&expr), vars.get("t"));
-    println!("Result: {}", result);
+    println!("Expression: {}, t = {:?}", to_string(&expr), vars.get("t")); // prints (t / 3)
+    println!("Result: {}", result); // prints 3
+
+
+    expr = Expr::Pow(
+        Box::new(Expr::Variable("u".to_string())),
+        Box::new(Expr::Variable("v".to_string())),
+    );
+
+    vars.insert("u".to_string(), 2.0);
+    vars.insert("v".to_string(), 3.0);
+    result = evaluate(&expr, &vars);
+
+    println!("Expression: {}, u = {:?}, v = {:?}", to_string(&expr), vars.get("u"), vars.get("v")); // prints (u ^ v)
+    println!("Result: {}", result); // prints 8
+
 
 }
 
