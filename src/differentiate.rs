@@ -1,5 +1,6 @@
 use crate::expr::{to_string, Expr};
 
+#[allow(unreachable_patterns)]
 pub fn differentiate(expr: &Expr, var: &str) -> Expr {
     match expr {
         // derivative of a constant = 0
