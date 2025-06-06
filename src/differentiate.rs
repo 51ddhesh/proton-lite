@@ -39,14 +39,14 @@ pub fn differentiate(expr: &Expr, var: &str) -> Expr {
         ),
 
 
-        Expr::Div(left, right) => {
-            Expr::Number(0.0)
+        Expr::Div(_left, _right) => {
+            Expr::Number(1.0)
         },
-        Expr::Pow(base, power ) => {
-            Expr::Number(0.0)
+        Expr::Pow(_base, _power ) => {
+            Expr::Number(2.0)
         },
-        Expr::Func(name, args) => {
-            Expr::Number(0.0)
+        Expr::Func(_name, _args) => {
+            Expr::Number(3.0)
         },
         _ => panic!("Unknown Function: {}", to_string(&expr)),
     }
