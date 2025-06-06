@@ -44,6 +44,6 @@ This will execute the test suite to verify the correctness of expression evaluat
 - Implement string parsing: Add a parser to convert string input into `Expr` ASTs, enabling user-friendly input.
 - Complete [`repl.rs`](/src/repl.rs): Build an interactive Read-Eval-Print Loop (REPL) for evaluating and manipulating expressions from the command line.
 
-> Currently, the [`main.rs`](/src/main.rs) is currently a placeholder. It is kept for potential future use if this project is extended as a CLI or an API service.
+> Currently, the [`main.rs`](/src/main.rs) is a placeholder. It is kept for potential future use if this project is extended as a CLI or an API service.
 
 These tasks will make Proton a more complete and user-friendly math engine for both programmatic and interactive use.
