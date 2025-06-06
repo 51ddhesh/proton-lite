@@ -14,7 +14,7 @@ rustc --version
 cargo --version
 ```
 
-You can install `Rust` and `cargo` by following the instructions at [rustup.rs](https://rustup.rs/).
+`Rust` and `cargo` can be installed by following the instructions at [rustup.rs](https://rustup.rs/).
 
 ## Usage
 
