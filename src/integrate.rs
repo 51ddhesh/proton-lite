@@ -28,7 +28,15 @@ pub fn integrate(expr: &Expr, var: &str) -> Expr {
             )
         },
 
-        
+        // ∫(f - g) = ∫f - ∫g
+        Expr::Sub(left, right) => {
+            Expr::Sub(
+                Box::new(integrate(&left, var)),
+                Box::new(integrate(&right, var))
+            )
+        },
+
+        // TODO: Add integration by parts     
 
         _ => todo!()
 
