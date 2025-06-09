@@ -47,3 +47,6 @@ This will execute the test suite to verify the correctness of expression evaluat
 > Currently, the [`main.rs`](/src/main.rs) is a placeholder. It is kept for potential future use if this project is extended as a CLI or an API service.
 
 These tasks will make Proton a more complete and user-friendly math engine for both programmatic and interactive use.
+
+## License
+Licensed under the [MIT License](./LICENSE)
