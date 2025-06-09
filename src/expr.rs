@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 
 pub enum Expr {
     Number(f64), // 2.0 or 3.4
