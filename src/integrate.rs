@@ -79,21 +79,31 @@ pub fn integrate(expr: &Expr, var: &str) -> Expr {
         Expr::Func(name, args) if args.len() == 1 => {
             let arg = &args[0];
             match name.as_str() {
+                // ∫sin(x) dx = -cos(x)
                 "sin" => Expr::Mul(
                     Box::new(Expr::Number(-1.0)),
                     Box::new(Expr::Func("cos".into(), vec![arg.clone()]))
                 ),
 
+                // ∫cos(x) dx = sin(x)
                 "cos" => Expr::Func(
                     "sin".to_string(),
                     vec![arg.clone()]
                 ),
 
-                _ => todo!()
+                // ∫ln(x) dx = xln(x) - x
+                "ln" => {
+                    Expr::Sub(
+                        Box::new(Expr::Mul(Box::new(arg.clone()), Box::new(Expr::Func("ln".into(), vec![arg.clone()])))),
+                        Box::new(arg.clone())
+                    )
+                },
+
+                _ => panic!("No support for this function yet!")
             }
         }
 
-        _ => todo!()
+        _ => panic!("No support yet")
 
     }
 }

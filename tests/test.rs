@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use proton_lite::{expr::Expr};
 use proton_lite::eval::evaluate;
 use proton_lite::differentiate::differentiate;
+use proton_lite::integrate::integrate;
 
 #[test]
 fn test_addition() {
@@ -268,4 +269,92 @@ mod differentiate_tests {
             Box::new(Expr::Variable("x".to_string()))
         ));
     }
+}
+
+#[test]
+fn test_integrate_constant() {
+    let expr = Expr::Number(3.0);
+    let result = integrate(&expr, "x");
+    // ∫3 dx = 3x
+    assert_eq!(result, Expr::Mul(Box::new(Expr::Number(3.0)), Box::new(Expr::Variable("x".to_string()))));
+}
+
+#[test]
+fn test_integrate_variable() {
+    let expr = Expr::Variable("x".to_string());
+    let result = integrate(&expr, "x");
+    // ∫x dx = x^2/2
+    assert_eq!(result, Expr::Div(
+        Box::new(Expr::Pow(Box::new(Expr::Variable("x".to_string())), Box::new(Expr::Number(2.0)))),
+        Box::new(Expr::Number(2.0))
+    ));
+}
+
+#[test]
+fn test_integrate_add() {
+    let expr = Expr::Add(
+        Box::new(Expr::Number(2.0)),
+        Box::new(Expr::Variable("x".to_string())),
+    );
+    let result = integrate(&expr, "x");
+    // ∫(2 + x) dx = ∫2 dx + ∫x dx = 2x + x^2/2
+    assert_eq!(result, Expr::Add(
+        Box::new(Expr::Mul(Box::new(Expr::Number(2.0)), Box::new(Expr::Variable("x".to_string())))),
+        Box::new(Expr::Div(
+            Box::new(Expr::Pow(Box::new(Expr::Variable("x".to_string())), Box::new(Expr::Number(2.0)))),
+            Box::new(Expr::Number(2.0))
+        ))
+    ));
+}
+
+#[test]
+fn test_integrate_pow() {
+    let expr = Expr::Pow(Box::new(Expr::Variable("x".to_string())), Box::new(Expr::Number(3.0)));
+    let result = integrate(&expr, "x");
+    // ∫x^3 dx = x^4/4
+    assert_eq!(result, Expr::Div(
+        Box::new(Expr::Pow(Box::new(Expr::Variable("x".to_string())), Box::new(Expr::Number(4.0)))),
+        Box::new(Expr::Number(4.0))
+    ));
+}
+
+#[test]
+fn test_integrate_inv() {
+    let expr = Expr::Pow(Box::new(Expr::Variable("x".to_string())), Box::new(Expr::Number(-1.0)));
+    let result = integrate(&expr, "x");
+    // ∫x^-1 dx = ln(x)
+    assert_eq!(result, Expr::Func("ln".to_string(), vec![Expr::Variable("x".to_string())]));
+}
+
+#[test]
+fn test_integrate_sin() {
+    let expr = Expr::Func("sin".to_string(), vec![Expr::Variable("x".to_string())]);
+    let result = integrate(&expr, "x");
+    // ∫sin(x) dx = -cos(x)
+    assert_eq!(result, Expr::Mul(
+        Box::new(Expr::Number(-1.0)),
+        Box::new(Expr::Func("cos".to_string(), vec![Expr::Variable("x".to_string())]))
+    ));
+}
+
+#[test]
+fn test_integrate_cos() {
+    let expr = Expr::Func("cos".to_string(), vec![Expr::Variable("x".to_string())]);
+    let result = integrate(&expr, "x");
+    // ∫cos(x) dx = sin(x)
+    assert_eq!(result, Expr::Func("sin".to_string(), vec![Expr::Variable("x".to_string())]));
+}
+
+#[test]
+fn test_integrate_ln() {
+    let expr = Expr::Func("ln".to_string(), vec![Expr::Variable("x".to_string())]);
+    let result = integrate(&expr, "x");
+    // ∫ln(x) dx = xln(x) - x
+    assert_eq!(result, Expr::Sub(
+        Box::new(Expr::Mul(
+            Box::new(Expr::Variable("x".to_string())),
+            Box::new(Expr::Func("ln".to_string(), vec![Expr::Variable("x".to_string())]))
+        )),
+        Box::new(Expr::Variable("x".to_string()))
+    ));
 }
