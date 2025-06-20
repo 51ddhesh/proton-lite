@@ -36,17 +36,9 @@ cargo test
 
 This will execute the test suite to verify the correctness of expression evaluation and other core features.
 
-## TODO / Upcoming Features
-
-- Complete the implementation of [`differentiate.rs`](/src/differentiate.rs): Add full support for symbolic differentiation of mathematical expressions.
-- Complete the implementation of [`integrate.rs`](/src/integrate.rs): Implement symbolic integration for supported expressions.
-- Improve [`simplify.rs`](/src/simplify.rs): Enhance the simplification logic to handle more complex expressions and edge cases.
-- Implement string parsing: Add a parser to convert string input into `Expr` ASTs, enabling user-friendly input.
-- Complete [`repl.rs`](/src/repl.rs): Build an interactive Read-Eval-Print Loop (REPL) for evaluating and manipulating expressions from the command line.
 
 > Currently, the [`main.rs`](/src/main.rs) is a placeholder. It is kept for potential future use if this project is extended as a CLI or an API service.
 
-These tasks will make Proton a more complete and user-friendly math engine for both programmatic and interactive use.
 
 ## License
 Licensed under the [MIT License](./LICENSE)
